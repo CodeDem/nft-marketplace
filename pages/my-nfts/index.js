@@ -60,24 +60,30 @@ export default function MyNFTs() {
 
   return (
     <DefaultLayout title="My NFTs">
-      <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-        {nfts.map((nft) => (
-          <div key={nft.tokenId} className="group relative">
-            <div className="w-full min-h-40 bg-gray-200 p-2 aspect-w-1 aspect-h-1 rounded-md overflow-hidden group-hover:opacity-75 lg:h-80 lg:aspect-none">
-              <img
-                src={nft.image}
-                alt={nft.name}
-                className="w-full h-full object-center object-contain lg:w-full lg:h-full"
-              />
+      {isLoading ? (
+        <div className="flex justify-center items-center">
+          <div className="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-24 w-24"></div>
+        </div>
+      ) : (
+        <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+          {nfts.map((nft) => (
+            <div key={nft.tokenId} className="group relative">
+              <div className="w-full min-h-40 bg-gray-200 p-2 aspect-w-1 aspect-h-1 rounded-md overflow-hidden group-hover:opacity-75 lg:h-80 lg:aspect-none">
+                <img
+                  src={nft.image}
+                  alt={nft.name}
+                  className="w-full h-full object-center object-contain lg:w-full lg:h-full"
+                />
+              </div>
+              <div className="mt-4 flex flex-col justify-between">
+                <p className="text-md font-bold">{nft.name}</p>
+                <p className="text-sm ">{nft.description}</p>
+                <p className="font-lg font-bold">{nft.price} ETH</p>
+              </div>
             </div>
-            <div className="mt-4 flex flex-col justify-between">
-              <p className="text-md font-bold">{nft.name}</p>
-              <p className="text-sm ">{nft.description}</p>
-              <p className="font-lg font-bold">{nft.price} ETH</p>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </DefaultLayout>
   );
 }

@@ -2,6 +2,8 @@ import React, { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import Link from "next/link";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
 const user = {
   name: "Tom Cook",
@@ -178,6 +180,7 @@ const DefaultLayout = ({ children, title }) => {
           </main>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 };

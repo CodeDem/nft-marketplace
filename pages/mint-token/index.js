@@ -8,7 +8,7 @@ import { nftAddress, nftMarketAddress } from "../../config";
 import NFT from "../../artifacts/contracts/NFT.sol/NFT.json";
 import MMarket from "../../artifacts/contracts/MMarket.sol/MMarket.json";
 import { useRouter } from "next/dist/client/router";
-
+import { toast } from "react-toastify";
 //  In this component we set the IPFS up to host NFT data of file storage
 const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
 
@@ -35,7 +35,7 @@ const MintToken = () => {
   };
 
   const createMarket = async (e) => {
-      e.preventDefault();
+    e.preventDefault();
     const { name, description, price } = formData;
     if (!name || !description || !price || !fileUrl) return;
     //   upload to IPFS
@@ -51,30 +51,46 @@ const MintToken = () => {
   };
 
   const creatSale = async (url) => {
-    const web3Modal = new Web3Modal();
-    const connection = await web3Modal.connect();
-    const provider = new ethers.providers.Web3Provider(connection);
-    const signer = provider.getSigner();
+    const toastId = toast.loading("Mingting NFT, please wait!");
+    try {
+      const web3Modal = new Web3Modal();
+      const connection = await web3Modal.connect();
+      const provider = new ethers.providers.Web3Provider(connection);
+      const signer = provider.getSigner();
+      //  we want to create the token
+      let contract = new ethers.Contract(nftAddress, NFT.abi, signer);
+      let transaction = await contract.mintToken(url);
+      let tx = await transaction.wait();
+      let event = tx.events[0];
+      let value = event.args[2];
+      let tokenId = value.toNumber();
+      const price = ethers.utils.parseUnits(formData.price, "ether");
 
-    //  we want to create the token
-    let contract = new ethers.Contract(nftAddress, NFT.abi, signer);
-    let transaction = await contract.mintToken(url);
-    let tx = await transaction.wait();
-    let event = tx.events[0];
-    let value = event.args[2];
-    let tokenId = value.toNumber();
-    const price = ethers.utils.parseUnits(formData.price, "ether");
+      // list the item for sale on the marketplace
+      contract = new ethers.Contract(nftMarketAddress, MMarket.abi, signer);
+      let listingPrice = await contract.getListingPrice();
+      listingPrice = listingPrice.toString();
 
-    // list the item for sale on the marketplace
-    contract = new ethers.Contract(nftMarketAddress, MMarket.abi, signer);
-    let listingPrice = await contract.getListingPrice();
-    listingPrice = listingPrice.toString();
-
-    transaction = await contract.makeMarketItem(nftAddress, tokenId, price, {
-      value: listingPrice,
-    });
-    await transaction.wait();
-    router.push("/");
+      transaction = await contract.makeMarketItem(nftAddress, tokenId, price, {
+        value: listingPrice,
+      });
+      await transaction.wait();
+      toast.update(toastId, {
+        render: `Successfully minted the NFT`,
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+      router.push("/");
+    } catch (error) {
+      console.log(error);
+      toast.update(toastId, {
+        type: "error",
+        isLoading: false,
+        autoClose: 2000,
+        render: `${error.data.message}`,
+      });
+    }
   };
 
   return (
