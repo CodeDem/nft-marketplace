@@ -116,7 +116,7 @@ export default function Home() {
               <div className="mt-4 flex flex-col justify-between">
                 <p className="text-md font-bold">{nft.name}</p>
                 <p className="text-sm line-clamp-1">{nft.description}</p>
-                <p className="font-lg font-bold">{nft.price} ETH</p>
+                <p className="font-lg font-bold">{nft.price} MATIC</p>
                 <button
                   type="button"
                   className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-md  font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

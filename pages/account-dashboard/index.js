@@ -83,7 +83,7 @@ export default function AccountDashboard() {
               <div className="mt-4 flex flex-col justify-between">
                 <p className="text-md font-bold">{nft.name}</p>
                 <p className="text-sm ">{nft.description}</p>
-                <p className="font-lg font-bold">{nft.price} ETH</p>
+                <p className="font-lg font-bold">{nft.price} MATIC</p>
               </div>
             </div>
           ))}

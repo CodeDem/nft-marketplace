@@ -147,7 +147,7 @@ const MintToken = () => {
                   htmlFor="price"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Price (ETH)
+                  Price (MATIC)
                 </label>
                 <div className="mt-1">
                   <input
