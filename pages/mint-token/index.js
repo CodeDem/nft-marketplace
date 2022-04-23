@@ -75,6 +75,13 @@ const MintToken = () => {
         value: listingPrice,
       });
       await transaction.wait();
+
+      // calling SDK minted function
+      if (typeof window !== "undefined") {
+        window.MintMage.nftMinted(function (res) {
+          console.log(res);
+        })
+      }
       toast.update(toastId, {
         render: `Successfully minted the NFT`,
         type: "success",
