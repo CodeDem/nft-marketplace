@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
+
 const user = {
   name: "Tom Cook",
   email: "tom@example.com",
@@ -40,6 +41,7 @@ const DefaultLayout = ({ children, title }) => {
         ```
       */}
       <div className="min-h-full">
+        {/* eslint-disable-next-line @next/next/inline-script-id */}
         <Disclosure as="nav" className="bg-white border-b border-gray-200">
           {({ open }) => (
             <>
