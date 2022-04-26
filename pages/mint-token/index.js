@@ -78,7 +78,7 @@ const MintToken = () => {
 
       // calling SDK minted function
       if (typeof window !== "undefined") {
-        window.MintMage.nftMinted(function (res) {
+        window.MintMage.nftMinted(nftAddress, transaction.hash, function (res) {
           console.log(res);
         })
       }
