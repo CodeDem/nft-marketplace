@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
+
 const user = {
   name: "Tom Cook",
   email: "tom@example.com",
@@ -40,6 +41,7 @@ const DefaultLayout = ({ children, title }) => {
         ```
       */}
       <div className="min-h-full">
+        {/* eslint-disable-next-line @next/next/inline-script-id */}
         <Disclosure as="nav" className="bg-white border-b border-gray-200">
           {({ open }) => (
             <>
@@ -63,19 +65,34 @@ const DefaultLayout = ({ children, title }) => {
                     </div>
                     <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                       {navigation.map((item) => (
-                        <a
+                        <Link
                           key={item.name}
                           href={item.href}
-                          className={classNames(
-                            router.pathname === item.href
-                              ? "border-indigo-500 text-gray-900"
-                              : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-                            "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-                          )}
-                          aria-current={item.current ? "page" : undefined}
                         >
-                          {item.name}
-                        </a>
+                          <a
+                            className={classNames(
+                              router.pathname === item.href
+                                ? "border-indigo-500 text-gray-900"
+                                : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
+                              "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                            )}
+                          >
+                            {item.name}
+                          </a>
+                        </Link>
+                        // <a
+                        //   key={item.name}
+                        //   href={item.href}
+                        //   className={classNames(
+                        //     router.pathname === item.href
+                        //       ? "border-indigo-500 text-gray-900"
+                        //       : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
+                        //     "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                        //   )}
+                        //   aria-current={item.current ? "page" : undefined}
+                        // >
+                        //   {item.name}
+                        // </a>
                       ))}
                     </div>
                   </div>

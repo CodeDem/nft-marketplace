@@ -3,4 +3,7 @@ module.exports = {
   images: {
     domains: ["tailwindui.com"],
   },
+  experimental: {
+    nextScriptWorkers: true,
+  },
 };
