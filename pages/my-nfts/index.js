@@ -41,6 +41,10 @@ export default function MyNFTs() {
         const tokenUri = await tokenContract.tokenURI(item.tokenId);
         // we want to get the token metadata - JSON
         const meta = await axios.get(tokenUri);
+         // if meta.data is a string JSOn parse it
+         if (typeof meta.data === "string") {
+          meta.data = JSON.parse(meta.data);
+        }
         let price = ethers.utils.formatUnits(item.price.toString(), "ether");
         let token = {
           price,

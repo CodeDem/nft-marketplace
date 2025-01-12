@@ -38,6 +38,10 @@ export default function Home() {
         const tokenUri = await tokenContract.tokenURI(item.tokenId);
         // we want to get the token metadata - JSON
         const meta = await axios.get(tokenUri);
+        // if meta.data is a string JSOn parse it
+        if (typeof meta.data === "string") {
+          meta.data = JSON.parse(meta.data);
+        }
         let price = ethers.utils.formatUnits(item.price.toString(), "ether");
         let token = {
           price,
@@ -60,7 +64,9 @@ export default function Home() {
     const toastId = toast.loading("Processing, please wait!");
 
     try {
-      const web3Modal = new Web3Modal();
+      const web3Modal = new Web3Modal({
+        chainId: 80002,
+      });
       const connection = await web3Modal.connect();
       const provider = new ethers.providers.Web3Provider(connection);
       const signer = provider.getSigner();
@@ -89,7 +95,7 @@ export default function Home() {
       console.log(error.message);
       toast.update(toastId, {
         type: toast.TYPE.ERROR,
-        render: `${error.message}`,
+        render: `${error.data.message.includes("insufficient funds") ? "Insufficient funds in wallet for purchase!" : "An error occurred"}`,
         isLoading: false,
         autoClose: 2000,
       });

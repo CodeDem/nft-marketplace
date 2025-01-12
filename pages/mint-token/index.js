@@ -9,11 +9,17 @@ import NFT from "../../artifacts/contracts/NFT.sol/NFT.json";
 import MMarket from "../../artifacts/contracts/MMarket.sol/MMarket.json";
 import { useRouter } from "next/dist/client/router";
 import { toast } from "react-toastify";
-//  In this component we set the IPFS up to host NFT data of file storage
-const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
+import { PinataSDK } from "pinata-web3"
+
+export const pinata = new PinataSDK({
+  pinataJwt: `${process.env.NEXT_PUBLIC_PINATA_JWT}`,
+  pinataGateway: `${process.env.NEXT_PUBLIC_GATEWAY_URL}`
+})
+
 
 const MintToken = () => {
   const [fileUrl, setFileUrl] = useState(null);
+  const [isfileUploading, setIsFileUploading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     price: "",
@@ -24,13 +30,14 @@ const MintToken = () => {
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     try {
-      const added = await client.add(file, {
-        progress: (prog) => console.log(`received: ${prog}`),
-      });
-      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+      setIsFileUploading(true);
+      const upload = await pinata.upload.file(file);
+      const url = await pinata.gateways.convert(upload.IpfsHash)
       setFileUrl(url);
+      setIsFileUploading(false);
     } catch (error) {
       console.log(error);
+      setIsFileUploading(false);
     }
   };
 
@@ -39,10 +46,9 @@ const MintToken = () => {
     const { name, description, price } = formData;
     if (!name || !description || !price || !fileUrl) return;
     //   upload to IPFS
-    const data = JSON.stringify({ name, description, image: fileUrl });
     try {
-      const added = await client.add(data);
-      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+      const upload = await pinata.upload.json({ name, description, image: fileUrl });
+      const url = await pinata.gateways.convert(upload.IpfsHash)
       // run a function that creates sale and passes in the url
       creatSale(url);
     } catch (error) {
@@ -53,7 +59,10 @@ const MintToken = () => {
   const creatSale = async (url) => {
     const toastId = toast.loading("Mingting NFT, please wait!");
     try {
-      const web3Modal = new Web3Modal();
+      const web3Modal = new Web3Modal({
+        // network polygon amoy
+        chainId: 80002,
+      });
       const connection = await web3Modal.connect();
       const provider = new ethers.providers.Web3Provider(connection);
       const signer = provider.getSigner();
@@ -88,7 +97,7 @@ const MintToken = () => {
         type: "error",
         isLoading: false,
         autoClose: 2000,
-        render: `${error.data.message}`,
+        render: `${error.message}`,
       });
     }
   };
@@ -186,12 +195,20 @@ const MintToken = () => {
               </div>
 
               <div>
-                <button
+                {
+                  isfileUploading ? (<button
+                    type="submit"
+                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled"
+                  >
+                    Uploading please wait...
+                  </button>) :  <button
                   type="submit"
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled"
                 >
                   Mint
                 </button>
+                }
+               
               </div>
             </form>
           </div>
